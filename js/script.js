@@ -1,0 +1,85 @@
+var converter = new showdown.Converter();
+
+const messagesContainer = document.getElementById('messages');
+const userInput = document.getElementById('userInput');
+const API_URL = 'http://localhost:5000/api/chat';
+const MODEL_NAME = 'deepseek-coder-v2';
+
+async function sendMessage() {
+    const content = userInput.value.trim();
+    if (!content) return;
+
+    // Display user message
+    createMessage('user')
+    addMessage(content, 'user');
+    userInput.value = '';
+
+    // Send message to Ollama API with streaming enabled
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: MODEL_NAME,
+                messages: [{ role: 'user', content: content }],
+                stream: true  // Enable streaming
+            })
+        });
+
+        if (response.ok) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let done = false;
+            let messageContent = '';  // Accumulate the assistant's response
+
+            createMessage('assistant');
+            while (!done) {
+                const { value, done: chunkDone } = await reader.read();
+                done = chunkDone;
+                if(done)
+                {
+                  console.log(messageContent);
+                  break;
+                }
+                const chunkText = decoder.decode(value, { stream: true });
+                try {
+                    const parsedChunk = JSON.parse(chunkText);  // Parse the chunk into JSON
+                    const assistantMessage = parsedChunk.message?.content || '';
+                    messageContent += assistantMessage;  // Append the message content
+                } catch (e) {
+                    console.error('Error parsing chunk:', e);
+                }
+                const htmlContent = converter.makeHtml(messageContent);  // Convert Markdown to HTML
+                addMessage(htmlContent, 'assistant', true);  // Pass `true` to indicate HTML content
+            }
+        } else {
+            addMessage('Failed to get response from Ollama API.', 'assistant');
+        }
+    } catch (error) {
+        addMessage(`Error: ${error.message}`, 'assistant');
+    }
+}
+
+function createMessage(sender)
+{
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${sender}`;
+  messagesContainer.appendChild(messageDiv);
+}
+
+function addMessage(content, sender, isHtml = false) {
+
+    const messageDiv = messagesContainer.lastElementChild;
+    // If the content is HTML (Markdown converted), insert as HTML
+    if (isHtml) {
+        messageDiv.innerHTML = content;  // Inject the HTML content
+    } else {
+        messageDiv.textContent = content;  // Regular text content
+    }
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;  // Auto-scroll
+}
+
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
