@@ -2,7 +2,7 @@ var converter = new showdown.Converter();
 
 const messagesContainer = document.getElementById('messages');
 const userInput = document.getElementById('userInput');
-const API_URL = 'http://192.168.178.68:5000/api/chat';
+const API_URL = 'http://192.168.2.41:11434/api/chat';
 const MODEL_NAME = 'deepseek-coder-v2';
 
 async function sendMessage() {

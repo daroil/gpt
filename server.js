@@ -2,6 +2,7 @@ const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
 
+const path = require('path'); // Import the 'path' module for resolving file paths
 const app = express();
 
 app.use(cors());
@@ -17,10 +18,6 @@ app.use('/api', (req, res, next) => {
         res.status(500).send('Proxy Error');
     }
 }));
-
-app.get('/', (req, res) => {
-    res.send('Proxy server is running');
-});
 
 app.listen(5000, () => {
     console.log('Proxy server running on http://localhost:5000');
