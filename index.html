@@ -2,169 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Include marked.js from CDN -->
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ollama Chat</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f3f4f6;
-        }
-        .chat-container {
-            width: 400px;
-            height: 600px;
-            display: flex;
-            flex-direction: column;
-            border: 2px solid #3b82f6;
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        .messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .message {
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 75%;
-        }
-        .user {
-            align-self: flex-end;
-            background-color: #3b82f6;
-            color: #ffffff;
-        }
-        .assistant {
-            align-self: flex-start;
-            background-color: #e5e7eb;
-            color: #000000;
-        }
-        .input-container {
-            display: flex;
-            border-top: 1px solid #d1d5db;
-        }
-        .input-container input {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            outline: none;
-            font-size: 1rem;
-            border-radius: 0;
-        }
-        .input-container button {
-            background-color: #3b82f6;
-            color: #ffffff;
-            border: none;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .input-container button:hover {
-            background-color: #2563eb;
-        }
-    </style>
+    <link rel="icon" href="img/icon.png" type="image/png">
+    <title>Sky Chat</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="chat-container">
         <div class="messages" id="messages"></div>
         <div class="input-container">
-            <input type="text" id="userInput" placeholder="Type your message..." />
+            <textarea type="text" class="textInput" id="userInput" placeholder="Type your message..." ></textarea>
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
-
-<script src="https://cdn.jsdelivr.net/npm/showdown@1.9.0/dist/showdown.min.js"></script>
-    <script>
-        var converter = new showdown.Converter()
-
-        const messagesContainer = document.getElementById('messages');
-        const userInput = document.getElementById('userInput');
-        const API_URL = 'http://localhost:5000/api/chat';
-        const MODEL_NAME = 'deepseek-coder';
-
-async function sendMessage() {
-    const content = userInput.value.trim();
-    if (!content) return;
-
-    // Display user message
-    addMessage(content, 'user');
-    userInput.value = '';
-
-    // Send message to Ollama API with streaming enabled
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: MODEL_NAME,
-                messages: [{ role: 'user', content: content }],
-                stream: true  // Enable streaming
-            })
-        });
-
-        if (response.ok) {
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let done = false;
-            let messageContent = '';  // Accumulate the assistant's response
-
-            while (!done) {
-                const { value, done: chunkDone } = await reader.read();
-                done = chunkDone;
-                const chunkText = decoder.decode(value, { stream: true });
-                // const chunkJSON = chunkText.trim();  // Clean any extra spaces or newlines
-                try {
-                    const parsedChunk = JSON.parse(chunkText);  // Parse the chunk into JSON
-                    const assistantMessage = parsedChunk.message?.content || '';
-                    messageContent += assistantMessage;  // Append the message content
-
-                    // Only append the message content (ignoring other fields)
-                } catch (e) {
-                    // Ignore invalid or malformed chunks
-                    console.error('Error parsing chunk:', e);
-                }
-            }
-            const htmlContent = converter.makeHtml(messageContent);  // Convert Markdown to HTML
-            addMessage(htmlContent, 'assistant', true);  // Pass `true` to indicate HTML content
-
-        } else {
-            addMessage('Failed to get response from Ollama API.', 'assistant');
-        }
-    } catch (error) {
-        addMessage(`Error: ${error.message}`, 'assistant');
-    }
-}
-
-
-  function addMessage(content, sender, isHtml = false) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}`;
-
-    // If the content is HTML (Markdown converted), insert as HTML
-    if (isHtml) {
-        messageDiv.innerHTML = content;  // Inject the HTML content
-    } else {
-        messageDiv.textContent = content;  // Regular text content
-    }
-
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;  // Auto-scroll
-}
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-    </script>
-
+    <script src="
+https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js
+"></script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.0/dist/showdown.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
+
+
+

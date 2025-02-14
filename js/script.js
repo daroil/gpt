@@ -3,7 +3,9 @@ var converter = new showdown.Converter();
 const messagesContainer = document.getElementById('messages');
 const userInput = document.getElementById('userInput');
 const API_URL = 'http://192.168.2.41:11434/api/chat';
-const MODEL_NAME = 'deepseek-coder-v2';
+const MODEL_NAME = 'llama3';
+
+const md = markdownit()
 
 async function sendMessage() {
     const content = userInput.value.trim();
@@ -51,9 +53,10 @@ async function sendMessage() {
                 done = chunkDone;
                 if(done)
                 {
-                  console.log(messageContent);
-                const htmlContent = converter.makeHtml(messageContent);  // Convert Markdown to HTML
-                addMessage(htmlContent, 'assistant', true);  // Pass `true` to indicate HTML content
+                  // console.log(messageContent);
+                    const result = md.render(messageContent);
+                    // const htmlContent = marked.parse(messageContent);  // Convert Markdown to HTML
+                    addMessage(result, 'assistant', true);  // Pass `true` to indicate HTML content
                   break;
                 }
                 const chunkText = decoder.decode(value, { stream: true });
@@ -64,6 +67,10 @@ async function sendMessage() {
                 } catch (e) {
                     console.error('Error parsing chunk:', e);
                 }
+
+                const result = md.render(messageContent);
+                addMessage(result, 'assistant', true);  // Pass `true` to indicate HTML content
+                // const htmlContent = marked.parse(messageContent);  // Convert Markdown to HTML
                 // addMessage(htmlContent, 'assistant', true);  // Pass `true` to indicate HTML content
             }
         } else {
@@ -101,4 +108,8 @@ userInput.addEventListener('keypress', (e) => {
         event.preventDefault();
         sendMessage();
     }
+});
+
+document.addEventListener('DOMContentLoaded',()=>{
+   userInput.focus();
 });
