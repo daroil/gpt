@@ -1,9 +1,9 @@
-var converter = new showdown.Converter();
+//var converter = new showdown.Converter();
 
 const messagesContainer = document.getElementById('messages');
 const userInput = document.getElementById('userInput');
-const API_URL = 'http://192.168.2.41:11434/api/chat';
-const MODEL_NAME = 'llama3';
+const API_URL = 'http://localhost:11434/api/chat';
+const MODEL_NAME = 'qwen2.5-coder';
 
 const md = markdownit()
 
