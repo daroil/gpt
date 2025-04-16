@@ -4,17 +4,17 @@
 sudo apt update
 
 # Install Node.js and npm
-echo "Installing Node.js and npm..."
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-sudo apt install -y nodejs
+#echo "Installing Node.js and npm..."
+#curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+#sudo apt install -y nodejs
 
 # Verify installation
-node -v
-npm -v
+#node -v
+#npm -v
 
 # Install build tools (required for some npm packages, especially those using native addons)
-echo "Installing build tools..."
-sudo apt install -y build-essential
+#echo "Installing build tools..."
+#sudo apt install -y build-essential
 
 # Optionally, you might want to install yarn globally if you prefer it over npm
 # curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -30,9 +30,10 @@ echo "Installing necessary npm packages..."
 # sudo apt install python3 python3-pip
 # pip3 install flask
 
-echo "Installation of the npm and node js complete!"
+#echo "Installation of the npm and node js complete!"
 
 curl https://ollama.ai/install.sh | sh
 ollama pull llama3
-ollama pull deepseek-coder-v2
-ollama pull deepseek-r1
+#ollama pull deepseek-coder-v2
+#ollama pull deepseek-r1
+ollama pull gemma3

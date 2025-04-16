@@ -1,24 +1,46 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const path = require('path');
 const cors = require('cors');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const path = require('path'); // Import the 'path' module for resolving file paths
 const app = express();
+const PORT = 3000; // Serve on this port
+const HOSTNAME = "0.0.0.0";
 
-app.use(cors());
-
-app.use('/api', (req, res, next) => {
-    console.log(`Proxy request: ${req.method} ${req.url}`);
-    next();
-}, createProxyMiddleware({
+const proxyMiddleware = createProxyMiddleware({
     target: 'http://localhost:11434/api',
     changeOrigin: false,
-    onError(err, req, res) {
-        console.error('Proxy error:', err);
-        res.status(500).send('Proxy Error');
+    on: {
+        proxyReq: (req, res) => {
+            // console.log('request before',req);
+        },
+        proxyRes: (req, res) => {
+            // console.log('\n\n\n\nRequest ',req);
+            // console.log('Resoponse ',res);
+        },
+        error: (err, req, res) => {
+            /* handle error */
+        },
     }
-}));
+});
+// Proxy API calls to Ollama
+//
+// Log incoming requests
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+});
 
-app.listen(5000, () => {
-    console.log('Proxy server running on http://localhost:5000');
+app.use('/api', proxyMiddleware);
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname)));
+
+// Handle fallback (SPA routing)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(PORT, HOSTNAME,() => {
+    console.log(`✅ Museum Guide app running at: http://${HOSTNAME}:${PORT}`);
 });

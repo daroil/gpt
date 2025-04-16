@@ -2,8 +2,8 @@
 
 const messagesContainer = document.getElementById('messages');
 const userInput = document.getElementById('userInput');
-const API_URL = 'http://localhost:11434/api/chat';
-const MODEL_NAME = 'qwen2.5-coder';
+const API_URL = '/api/chat';
+const MODEL_NAME = 'deepseek-r1';
 
 const md = markdownit()
 
@@ -40,7 +40,6 @@ async function sendMessage() {
                 stream: true  // Enable streaming
             })
         });
-
         if (response.ok) {
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
@@ -57,6 +56,7 @@ async function sendMessage() {
                     const result = md.render(messageContent);
                     // const htmlContent = marked.parse(messageContent);  // Convert Markdown to HTML
                     addMessage(result, 'assistant', true);  // Pass `true` to indicate HTML content
+                    wrapThinkBlocks(messagesContainer.lastElementChild);
                   break;
                 }
                 const chunkText = decoder.decode(value, { stream: true });
@@ -86,6 +86,122 @@ function createMessage(sender)
   const messageDiv = document.createElement('div');
   messageDiv.className = `message ${sender}`;
   messagesContainer.appendChild(messageDiv);
+}
+
+// function wrapThinkBlocks(container) {
+//     const allElements = Array.from(container.childNodes);
+//     let startIndex = null;
+//     let endIndex = null;
+//
+//     // Find the start and end of the think block
+//     for (let i = 0; i < allElements.length; i++) {
+//         const node = allElements[i];
+//         if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+//             const text = node.textContent || '';
+//
+//             if (text.includes('<think>') && startIndex === null) {
+//                 startIndex = i;
+//             }
+//
+//             if (text.includes('</think>') && startIndex !== null) {
+//                 endIndex = i;
+//                 break;
+//             }
+//         }
+//     }
+//
+//     if (startIndex !== null && endIndex !== null) {
+//         const wrapper = document.createElement('div');
+//         wrapper.classList.add('think');
+//
+//         const toWrap = allElements.slice(startIndex, endIndex + 1);
+//
+//         for (let node of toWrap) {
+//             const clone = node.cloneNode(true);
+//
+//             // Clean <think> and </think> tags from text content
+//             if (clone.nodeType === Node.ELEMENT_NODE || clone.nodeType === Node.TEXT_NODE) {
+//                 clone.textContent = (clone.textContent || '')
+//                     .replace('<think>', '')
+//                     .replace('</think>', '');
+//             }
+//
+//             wrapper.appendChild(clone);
+//             container.removeChild(node);
+//         }
+//
+//         // Insert wrapper at startIndex location
+//         const referenceNode = container.childNodes[startIndex];
+//         if (referenceNode) {
+//             container.insertBefore(wrapper, referenceNode);
+//         } else {
+//             container.appendChild(wrapper);
+//         }
+//     }
+// }
+
+function wrapThinkBlocks(container) {
+    const allElements = Array.from(container.childNodes);
+    let startIndex = null;
+    let endIndex = null;
+
+    for (let i = 0; i < allElements.length; i++) {
+        const node = allElements[i];
+        if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent || '';
+
+            if (text.includes('<think>') && startIndex === null) {
+                startIndex = i;
+            }
+
+            if (text.includes('</think>') && startIndex !== null) {
+                endIndex = i;
+                break;
+            }
+        }
+    }
+
+    if (startIndex !== null && endIndex !== null) {
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('think', 'collapsed');
+
+        // Add toggle button
+        const button = document.createElement('button');
+        button.classList.add('toggle-btn');
+        button.textContent = '💭 Show Thought';
+
+        button.addEventListener('click', () => {
+            wrapper.classList.toggle('collapsed');
+            button.textContent = wrapper.classList.contains('collapsed')
+                ? '💭 Show Thought'
+                : '💭 Hide Thought';
+        });
+
+        const content = document.createElement('div');
+        content.classList.add('think-content');
+
+        const toWrap = allElements.slice(startIndex, endIndex + 1);
+        for (let node of toWrap) {
+            const clone = node.cloneNode(true);
+            if (clone.nodeType === Node.ELEMENT_NODE || clone.nodeType === Node.TEXT_NODE) {
+                clone.textContent = (clone.textContent || '')
+                    .replace('<think>', '')
+                    .replace('</think>', '');
+            }
+            content.appendChild(clone);
+            container.removeChild(node);
+        }
+
+        wrapper.appendChild(button);
+        wrapper.appendChild(content);
+
+        const referenceNode = container.childNodes[startIndex];
+        if (referenceNode) {
+            container.insertBefore(wrapper, referenceNode);
+        } else {
+            container.appendChild(wrapper);
+        }
+    }
 }
 
 function addMessage(content, sender, isHtml = false) {
