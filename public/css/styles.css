@@ -78,6 +78,7 @@ body {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
+    max-width: 5em;
 }
 .input-container button:hover {
     background-color: #2563eb;
@@ -111,4 +112,15 @@ body {
 
 .think.collapsed .think-content {
     display: none;
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+.fill{
+    width: -webkit-fill-available;
+
 }

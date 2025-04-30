@@ -8,18 +8,28 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <div id="sidePanel" class="side-panel">
+        <button id="togglePanel">☰</button>
+        <button id="newChatBtn">+ New Chat</button>
+        <div id="chatList" class="chat-list"></div>
+    </div>
+<!--    <div class="sidebar">-->
+<!--        <button class="" id="newChat">New Chat</button>-->
+<!--    </div>-->
     <div class="chat-container">
         <div class="messages" id="messages"></div>
-        <div class="input-container">
-            <textarea type="text" class="textInput" id="userInput" placeholder="Type your message..." ></textarea>
-            <button onclick="sendMessage()">Send</button>
-            <button id="record">🎙️</button>
+        <div class="input-container row">
+            <textarea type="text" class="textInput fill" id="userInput" placeholder="Type your message..." ></textarea>
+            <button class="fill" onclick="sendMessage()">Send</button>
+            <button class="fill" id="record">🎙️</button>
         </div>
     </div>
     <script src="js/markdown-it.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.0/dist/showdown.min.js"></script>-->
 <!--  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>-->
     <script src="js/script.js"></script>
+    <script src="js/sidepanel.js"></script>
+    <link rel="stylesheet" href="css/sidepanel.css">
 </body>
 </html>
 

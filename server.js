@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+
+const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const multer = require('multer');
@@ -9,8 +11,14 @@ const fs = require('fs');
 const https = require('https');
 
 const app = express();
+
+const db = new sqlite3.Database('./chat.db');
+
+
 const PORT = 3000;
 const HOST = '0.0.0.0';
+
+app.use(cors());
 
 const proxyMiddleware = createProxyMiddleware({
     target: 'http://localhost:11434/api',
@@ -30,13 +38,6 @@ const proxyMiddleware = createProxyMiddleware({
 });
 // Proxy API calls to Ollama
 //
-// Log incoming requests
-app.use((req, res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.url}`);
-    next();
-});
-
-app.use('/api', proxyMiddleware);
 
 const options = {
     key: fs.readFileSync('./certs/key.pem'),
@@ -49,6 +50,32 @@ const { exec } = require('child_process');
 
 const axios = require('axios');
 const FormData = require('form-data');
+
+
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS chats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+  )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id INTEGER NOT NULL,
+    sender TEXT CHECK(sender IN ('user', 'assistant')) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (chat_id) REFERENCES chats(id)
+  )`);
+});
+
+// Log incoming requests
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    next();
+});
+
+app.use('/api', proxyMiddleware);
+
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -65,7 +92,7 @@ app.post('/transcribe', upload.single('audio'), (req, res) => {
             return res.status(500).send('Error converting to WAV');
         }
 
-        // Now call Whisper on the WAV file
+        // // Now call Whisper on the WAV file
         // const whisper = spawn('whisper-cli', ['-m', '/home/danila/Desktop/whisper.cpp/models/ggml-base.en.bin', '-f', wavPath]);
         //
         // let output = '';
@@ -75,6 +102,7 @@ app.post('/transcribe', upload.single('audio'), (req, res) => {
         //     fs.unlink(wavPath, () => {});
         //     res.json({ text: output.trim() });
         // });
+
         try {
             const form = new FormData();
             form.append('file', fs.createReadStream(wavPath));
@@ -98,6 +126,61 @@ app.post('/transcribe', upload.single('audio'), (req, res) => {
     });
 });
 
+// Create a new chat
+// Create a new chat
+app.post('/chats', (req, res) => {
+    const { name } = req.body;
+    console.log(name);
+    // Check if a chat with the same name already exists
+    db.get(`SELECT 1 FROM chats WHERE name = ?`, [name], function(err, row) {
+        if (err || row !== undefined) {
+            return res.status(400).json({ error: 'A chat with this name already exists' });
+        }
+
+        // If no chat with the same name exists, create a new one
+        db.run(`INSERT INTO chats (name) VALUES (?)`, [name], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ chatId: this.lastID });
+        });
+    });
+});
+
+// Add message to a chat
+app.post('/chats/:chatId/messages', (req, res) => {
+    const { chatId } = req.params;
+    const { sender, content } = req.body;
+
+    db.run(
+        `INSERT INTO messages (chat_id, sender, content) VALUES (?, ?, ?)`,
+        [chatId, sender, content],
+        function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ messageId: this.lastID });
+        }
+    );
+});
+
+// Get all messages in a chat
+app.get('/chats/:chatId/messages', (req, res) => {
+    const { chatId } = req.params;
+    db.all(
+        `SELECT sender, content, created_at FROM messages WHERE chat_id = ? ORDER BY created_at ASC`,
+        [chatId],
+        (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json(rows);
+        }
+    );
+});
+
+app.get('/chats/all', (req, res) => {
+    db.all(`SELECT id, name FROM chats ORDER BY id DESC`, (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+
 const loadModel = async () => {
     const form = new FormData();
     form.append('model', fs.createReadStream('/home/danila/Desktop/whisper.cpp/models/ggml-base.en.bin'));
@@ -111,6 +194,8 @@ const loadModel = async () => {
         console.error('❌ Failed to load Whisper model:', err.message);
     }
 };
+
+
 
 loadModel(); // Call this at startup
 

@@ -3,7 +3,7 @@
 const messagesContainer = document.getElementById('messages');
 const userInput = document.getElementById('userInput');
 const API_URL = '/api/chat';
-const MODEL_NAME = 'deepseek-r1:14b';
+const MODEL_NAME = 'llama3';
 
 const md = markdownit()
 
@@ -55,6 +55,7 @@ async function sendMessage() {
     // Display user message
     createMessage('user')
     addMessage(content, 'user');
+    saveMessage(content, 'user');
     userInput.value = '';
 
     const messages = document.querySelectorAll('.message');
@@ -97,6 +98,7 @@ async function sendMessage() {
                     const result = md.render(messageContent);
                     // const htmlContent = marked.parse(messageContent);  // Convert Markdown to HTML
                     addMessage(result, 'assistant', true);  // Pass `true` to indicate HTML content
+                    saveMessage(result,'assistant');
                     wrapThinkBlocks(messagesContainer.lastElementChild);
                   break;
                 }
@@ -258,6 +260,41 @@ function addMessage(content, sender, isHtml = false) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;  // Auto-scroll
 }
 
+function renderMessage(sender, content) {
+    const div = document.createElement('div');
+    div.className = sender; // 'user' or 'assistant'
+    div.className += ' message';
+    div.innerHTML = content;
+    wrapThinkBlocks(div);
+    messagesContainer.appendChild(div);
+}
+
+function loadMessages(id) {
+    fetch(`/chats/${id}/messages`)
+        .then(res => res.json())
+        .then(messages => {
+            messagesContainer.innerHTML = '';
+            messages.forEach(m => {
+                renderMessage(m.sender, m.content);
+            });
+        });
+}
+
+function saveMessage(content, sender) {
+    fetch(`/chats/${chatId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: sender, content })
+    }).then(() => {
+        // document.getElementById('msgInput').value = '';
+        // loadMessages();
+    });
+}
+
+let chatId = 1; // Use the chat ID created or selected
+
+loadMessages();
+
 userInput.addEventListener('keypress', (e) => {
     if ((e.shiftKey && e.key === 'Enter')) {
         // Prevent the default action of Shift+Enter
@@ -266,6 +303,34 @@ userInput.addEventListener('keypress', (e) => {
         sendMessage();
     }
 });
+
+// const newChatBtn = document.getElementById('newChat');
+// if (newChatBtn) {
+//     newChatBtn.addEventListener('click', (e) => {
+//         chatId++;
+//         fetch(`/chats`, {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ name: `chat_${chatId}` }),
+//         }).then(response => console.log(response.json()))
+//             .catch(error => {
+//                 // Handle the error here
+//                 console.error('Error:', error);
+//                 if (error.response) {
+//                     // The request was made and the server responded with this status code
+//                     const err = error.response.data;
+//                     console.error('Server Error:', err);
+//                 } else {
+//                     // Something happened in setting up the request that triggered an error.
+//                     console.error('Error:', error.message);
+//                 }
+//             })
+//             .finally(() => {
+//                 // Do something after the promise is settled (regardless of success or failure)
+//                 loadMessages();
+//             });
+//     })
+// }
 
 document.addEventListener('DOMContentLoaded',()=>{
    userInput.focus();

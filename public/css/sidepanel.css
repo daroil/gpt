@@ -1,0 +1,45 @@
+.side-panel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.side-panel.hidden {
+    transform: translateX(-100%);
+}
+
+#togglePanel {
+    position: absolute;
+    right: -30px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+.chat-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.chat-item {
+    padding: 8px;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+}
+
+.chat-item:hover {
+    background-color: #ccc;
+}
