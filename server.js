@@ -15,7 +15,7 @@ const app = express();
 const db = new sqlite3.Database('./chat.db');
 
 
-const PORT = 3000;
+const PORT = 3010;
 const HOST = '0.0.0.0';
 
 app.use(cors());
@@ -92,37 +92,37 @@ app.post('/transcribe', upload.single('audio'), (req, res) => {
             return res.status(500).send('Error converting to WAV');
         }
 
-        // // Now call Whisper on the WAV file
-        // const whisper = spawn('whisper-cli', ['-m', '/home/danila/Desktop/whisper.cpp/models/ggml-base.en.bin', '-f', wavPath]);
-        //
-        // let output = '';
-        // whisper.stdout.on('data', data => output += data.toString());
-        // whisper.on('close', () => {
-        //     fs.unlink(inputPath, () => {});
-        //     fs.unlink(wavPath, () => {});
-        //     res.json({ text: output.trim() });
-        // });
+        // Now call Whisper on the WAV file
+        const whisper = spawn('whisper-cli', ['-m', '/home/danila/Desktop/whisper.cpp/models/ggml-base.en.bin', '-f', wavPath]);
 
-        try {
-            const form = new FormData();
-            form.append('file', fs.createReadStream(wavPath));
-            form.append('temperature', '0.0');
-            form.append('temperature_inc', '0.2');
-            form.append('response_format', 'json');
-
-            const whisperRes = await axios.post('http://127.0.0.1:8080/inference', form, {
-                headers: form.getHeaders()
-            });
-
+        let output = '';
+        whisper.stdout.on('data', data => output += data.toString());
+        whisper.on('close', () => {
             fs.unlink(inputPath, () => {});
             fs.unlink(wavPath, () => {});
+            res.json({ text: output.trim() });
+        });
 
-            const resultText = whisperRes.data?.text || '[No transcription result]';
-            res.json({ text: resultText });
-        } catch (error) {
-            console.error('Whisper server error:', error.response?.data || error.message);
-            res.status(500).send('Error during Whisper inference');
-        }
+        // try {
+        //     const form = new FormData();
+        //     form.append('file', fs.createReadStream(wavPath));
+        //     form.append('temperature', '0.0');
+        //     form.append('temperature_inc', '0.2');
+        //     form.append('response_format', 'json');
+        //
+        //     const whisperRes = await axios.post('http://127.0.0.1:8080/inference', form, {
+        //         headers: form.getHeaders()
+        //     });
+        //
+        //     fs.unlink(inputPath, () => {});
+        //     fs.unlink(wavPath, () => {});
+        //
+        //     const resultText = whisperRes.data?.text || '[No transcription result]';
+        //     res.json({ text: resultText });
+        // } catch (error) {
+        //     console.error('Whisper server error:', error.response?.data || error.message);
+        //     res.status(500).send('Error during Whisper inference');
+        // }
     });
 });
 

@@ -7,6 +7,9 @@ const MODEL_NAME = 'llama3';
 
 const md = markdownit()
 
+
+let chatId = 1; // Use the chat ID created or selected
+
 let mediaRecorder;
 
 let audioChunks = [];
@@ -273,6 +276,7 @@ function loadMessages(id) {
     fetch(`/chats/${id}/messages`)
         .then(res => res.json())
         .then(messages => {
+            chatId = id;
             messagesContainer.innerHTML = '';
             messages.forEach(m => {
                 renderMessage(m.sender, m.content);
@@ -291,7 +295,6 @@ function saveMessage(content, sender) {
     });
 }
 
-let chatId = 1; // Use the chat ID created or selected
 
 loadMessages();
 
