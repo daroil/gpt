@@ -1,21 +1,21 @@
-body {
+    body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f3f4f6;
+    background-color: #0D0D0D;
 }
 .chat-container {
     width: 80vw;
     height: 90vh;
     display: flex;
     flex-direction: column;
-    border: 2px solid #3b82f6;
+    /*border: 2px solid #3b82f6;*/
     border-radius: 12px;
     overflow: hidden;
-    background-color: #ffffff;
+    background-color: #171717;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 .messages {
@@ -34,13 +34,13 @@ body {
 }
 .user {
     align-self: flex-end;
-    background-color: #3b82f6;
+    background-color: #262626;
     color: #ffffff;
 }
 .assistant {
     align-self: flex-start;
-    background-color: #e5e7eb;
-    color: #000000;
+    /*background-color: #e5e7eb;*/
+    color: #ececec;
 }
 .assistant pre {
     background-color: #f9f9f9;
@@ -56,14 +56,16 @@ body {
 }
 .input-container {
     display: flex;
-    border-top: 1px solid #d1d5db;
+    /*border-top: 1px solid #d1d5db;*/
     padding: 10px;
-    background-color: #f9fafb;
+    background-color: #1F1F1F;
 }
 .textInput {
+    background-color: #1F1F1F;
+    color: #ececec;
     flex: 1;
     padding: 12px;
-    border: 1px solid #d1d5db;
+    border: 0px solid #d1d5db;
     border-radius: 8px;
     outline: none;
     font-size: 1rem;
@@ -71,8 +73,8 @@ body {
     resize: none;
 }
 .input-container button {
-    background-color: #3b82f6;
-    color: #ffffff;
+    background-color: white;
+    color: black;
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
@@ -81,7 +83,8 @@ body {
     max-width: 5em;
 }
 .input-container button:hover {
-    background-color: #2563eb;
+    background-color: #0D0D0D;
+    color: white;
 }
 
 .think {
