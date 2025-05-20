@@ -17,10 +17,26 @@
 </head>
 <body>
     <div id="sidePanel" class="side-panel hidden invisible">
+        <div class="side-panel-content">
             <button id="newChatBtn" class="side-button">+ New Chat</button>
+            <button id="togglePanelEmbed" class="side-button side-button-embed large-font">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.16992 14.8299L14.8299 9.16992" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14.8299 14.8299L9.16992 9.16992" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
             <div id="chatList" class="chat-list"></div>
+
+        </div>
     </div>
-    <button id="togglePanel" class="side-button large-font">☰</button>
+    <button id="togglePanel" class="side-button large-font fixed-top-left">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 7H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 12H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 17H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </button>
 <!--    <div class="sidebar">-->
 <!--        <button class="" id="newChat">New Chat</button>-->
 <!--    </div>-->
@@ -28,8 +44,21 @@
         <div class="messages" id="messages"></div>
         <div class="input-container row">
             <textarea type="text" class="textInput fill" id="userInput" placeholder="Type your message..." ></textarea>
-            <button class="fill" onclick="sendMessage()">Send</button>
-            <button class="fill" id="record">🎙️</button>
+<!--            <img src="img/send-2.svg" class="fill button" onclick="sendMessage()" alt="Send Message">-->
+            <button class="fill button" onclick="sendMessage()">
+                <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.63346 6.32003L18.5385 3.49003C22.9835 2.22003 25.3985 4.30003 23.9285 8.11003L20.6268 16.6C18.4101 22.31 14.7701 22.31 12.5535 16.6L11.5735 14.08L8.63346 13.24C1.97179 11.34 1.97179 8.23003 8.63346 6.32003Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M11.7949 13.6501L15.9716 10.0601" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="fill button" id="record">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 19C15.81 19 18.5 16.31 18.5 13V8C18.5 4.69 15.81 2 12.5 2C9.19 2 6.5 4.69 6.5 8V13C6.5 16.31 9.19 19 12.5 19Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.5 11V13C3.5 17.97 7.53 22 12.5 22C17.47 22 21.5 17.97 21.5 13V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.60999 7.47993C11.39 6.82993 13.33 6.82993 15.11 7.47993" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10.53 10.4799C11.73 10.1499 13 10.1499 14.2 10.4799" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
     </div>
     <script src="js/markdown-it.min.js"></script>
@@ -37,7 +66,6 @@
 <!--  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>-->
     <script src="js/script.js"></script>
     <script src="js/sidepanel.js"></script>
-    <link rel="stylesheet" href="css/sidepanel.css">
 </body>
 </html>
 

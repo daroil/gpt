@@ -25,11 +25,24 @@ recordBtn.addEventListener('click', async () => {
         mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
         mediaRecorder.onstop = sendAudio;
         mediaRecorder.start();
-        recordBtn.textContent = '🛑';
+        recordBtn.innerHTML = `
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18.32 6.53C17.66 3.93 15.31 2 12.5 2C9.19 2 6.5 4.69 6.5 8V13C6.5 14.46 7.02 15.8 7.89 16.84" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18.5 9.97998V13C18.5 16.31 15.81 19 12.5 19C11.77 19 11.06 18.87 10.42 18.63" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M6.35999 19.58C7.96999 21.08 10.13 22 12.5 22C17.47 22 21.5 17.97 21.5 13V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22 2.98999L3 21.99" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12.05 5.50001V2.26001" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9 3.5V7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
     } else {
         mediaRecorder.stop();
         mediaRecorder = null;
-        recordBtn.textContent = '🎙️';
+        recordBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.5 19C15.81 19 18.5 16.31 18.5 13V8C18.5 4.69 15.81 2 12.5 2C9.19 2 6.5 4.69 6.5 8V13C6.5 16.31 9.19 19 12.5 19Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3.5 11V13C3.5 17.97 7.53 22 12.5 22C17.47 22 21.5 17.97 21.5 13V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9.60999 7.47993C11.39 6.82993 13.33 6.82993 15.11 7.47993" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10.53 10.4799C11.73 10.1499 13 10.1499 14.2 10.4799" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> 
+                            </svg>️`;
     }
 });
 
@@ -282,6 +295,7 @@ function loadMessages(id) {
                 renderMessage(m.sender, m.content);
             });
         });
+    togglePanel();
 }
 
 function saveMessage(content, sender) {

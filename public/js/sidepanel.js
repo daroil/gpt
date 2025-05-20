@@ -1,25 +1,34 @@
 const panel = document.getElementById('sidePanel');
 const toggleBtn = document.getElementById('togglePanel');
+const toggleBtnEmbed = document.getElementById('togglePanelEmbed');
 const chatList = document.getElementById('chatList');
 const newChatBtn = document.getElementById('newChatBtn');
 const sidePanelContent = document.getElementById('sidePanelContent');
 
 
-toggleBtn.addEventListener('click', () => {
-    if (!panel.classList.contains('hidden')) {
-        setTimeout(()=>{
-            panel.classList.toggle('invisible');
-        },402)
-        panel.classList.toggle('hidden');
+toggleBtn.addEventListener('click', togglePanel);
+toggleBtnEmbed.addEventListener('click', togglePanel);
+
+function togglePanel() {
+    if(panel)
+    {
+        if (!panel.classList.contains('hidden')) {
+            setTimeout(()=>{
+                panel.classList.add('invisible');
+                toggleBtn.classList.remove('invisible');
+            },402)
+            panel.classList.add('hidden');
+        }
+        else{
+            panel.classList.remove('invisible');
+            setTimeout(()=>{
+                // panel.classList.toggle('invisible');
+                panel.classList.remove('hidden');
+            },402)
+            toggleBtn.classList.add('invisible');
+        }
     }
-    else{
-        panel.classList.toggle('invisible');
-        setTimeout(()=>{
-            // panel.classList.toggle('invisible');
-        panel.classList.toggle('hidden');
-        },402)
-    }
-});
+}
 
 newChatBtn.addEventListener('click', () => {
     const chatName = prompt("Enter a name for the new chat:");
