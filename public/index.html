@@ -6,17 +6,25 @@
     <link rel="icon" href="img/icon.png" type="image/png">
     <title>Sky Chat</title>
     <link rel="stylesheet" href="css/styles.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <!-- Include Prism JS -->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>-->
+
+
 </head>
 <body>
-    <div id="sidePanel" class="side-panel">
-        <button id="togglePanel">☰</button>
-        <button id="newChatBtn">+ New Chat</button>
-        <div id="chatList" class="chat-list"></div>
+    <div id="sidePanel" class="side-panel hidden invisible">
+            <button id="newChatBtn" class="side-button">+ New Chat</button>
+            <div id="chatList" class="chat-list"></div>
     </div>
+    <button id="togglePanel" class="side-button large-font">☰</button>
 <!--    <div class="sidebar">-->
 <!--        <button class="" id="newChat">New Chat</button>-->
 <!--    </div>-->
-    <div class="chat-container">
+    <div class="chat-container ">
         <div class="messages" id="messages"></div>
         <div class="input-container row">
             <textarea type="text" class="textInput fill" id="userInput" placeholder="Type your message..." ></textarea>

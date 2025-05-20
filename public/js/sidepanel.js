@@ -2,10 +2,23 @@ const panel = document.getElementById('sidePanel');
 const toggleBtn = document.getElementById('togglePanel');
 const chatList = document.getElementById('chatList');
 const newChatBtn = document.getElementById('newChatBtn');
+const sidePanelContent = document.getElementById('sidePanelContent');
 
 
 toggleBtn.addEventListener('click', () => {
-    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden')) {
+        setTimeout(()=>{
+            panel.classList.toggle('invisible');
+        },402)
+        panel.classList.toggle('hidden');
+    }
+    else{
+        panel.classList.toggle('invisible');
+        setTimeout(()=>{
+            // panel.classList.toggle('invisible');
+        panel.classList.toggle('hidden');
+        },402)
+    }
 });
 
 newChatBtn.addEventListener('click', () => {
@@ -28,7 +41,7 @@ function loadChats() {
             chatList.innerHTML = '';
             chats.forEach(chat => {
                 const btn = document.createElement('button');
-                btn.className = 'chat-item';
+                btn.className = 'chat-item side-button';
                 btn.textContent = chat.name;
                 btn.dataset.id = chat.id;
                 btn.addEventListener('click', () => {

@@ -1,11 +1,21 @@
-    body {
+:root{
+    --textColor: #FFFFFF;
+    --light-bg: #ececec;
+    --dark-bg: #1F1F1F;
+    --dark-chat-bg: #171717;
+    --body-color: #0D0D0D;
+    --user-bg-color: #262626;
+    --assistant-code-bg-color: #4e4e4e;
+}
+
+body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #0D0D0D;
+    background-color: var(--body-color);
 }
 .chat-container {
     width: 80vw;
@@ -15,7 +25,7 @@
     /*border: 2px solid #3b82f6;*/
     border-radius: 12px;
     overflow: hidden;
-    background-color: #171717;
+    background-color: var(--dark-chat-bg);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 .messages {
@@ -34,35 +44,36 @@
 }
 .user {
     align-self: flex-end;
-    background-color: #262626;
-    color: #ffffff;
+    background-color: var(--user-bg-color);
+    color: var(--light-bg);
 }
 .assistant {
     align-self: flex-start;
     /*background-color: #e5e7eb;*/
-    color: #ececec;
+    color: var(--light-bg);
 }
 .assistant pre {
-    background-color: #f9f9f9;
+    background-color: var(--assistant-code-bg-color);
     padding: 10px;
     border-radius: 8px;
     overflow-x: auto;
 }
 .assistant code {
     font-family: 'Courier New', Courier, monospace;
-    background-color: #f9f9f9;
+    background-color: var(--assistant-code-bg-color);
     padding: 2px 4px;
     border-radius: 4px;
+    white-space: pre;
 }
 .input-container {
     display: flex;
     /*border-top: 1px solid #d1d5db;*/
     padding: 10px;
-    background-color: #1F1F1F;
+    background-color: var(--dark-bg);
 }
 .textInput {
-    background-color: #1F1F1F;
-    color: #ececec;
+    background-color: var(--dark-bg);
+    color: var(--light-bg);
     flex: 1;
     padding: 12px;
     border: 0px solid #d1d5db;
@@ -73,7 +84,7 @@
     resize: none;
 }
 .input-container button {
-    background-color: white;
+    background-color: var(--light-bg);
     color: black;
     border: none;
     padding: 12px 20px;
@@ -83,8 +94,8 @@
     max-width: 5em;
 }
 .input-container button:hover {
-    background-color: #0D0D0D;
-    color: white;
+    background-color: var(--body-color);
+    color: var(--light-bg);
 }
 
 .think {
@@ -125,5 +136,15 @@
 
 .fill{
     width: -webkit-fill-available;
+    width: -moz-available;
+}
 
+.large-font{
+    font-size: 1.5em;
+}
+
+@media screen and (max-width: 768px) {
+    body{
+        flex-direction: column;
+    }
 }
