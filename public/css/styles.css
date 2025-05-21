@@ -46,6 +46,11 @@ body {
     align-self: flex-end;
     background-color: var(--user-bg-color);
     color: var(--light-bg);
+    pre {
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+    }
 }
 .assistant {
     align-self: flex-start;
@@ -224,6 +229,23 @@ body {
 .side-panel-content{
     position: relative;
 }
+
+::-webkit-scrollbar {
+    width: 0.7em;
+}
+
+::-webkit-scrollbar-track {
+    /*border-radius: 8px;*/
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    background-color: var(--user-bg-color);
+}
+
 
 @media screen and (max-width: 768px) {
     .chat-container{

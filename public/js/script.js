@@ -65,11 +65,12 @@ async function sendAudio() {
 
 
 async function sendMessage() {
-    const content = userInput.value.trim();
+    let content = userInput.value.trim();
     if (!content) return;
 
     // Display user message
     createMessage('user')
+    content = `<pre>${escapeHtml(content)}</pre>`;
     addMessage(content, 'user');
     saveMessage(content, 'user');
     userInput.value = '';
@@ -263,15 +264,23 @@ function wrapThinkBlocks(container) {
     }
 }
 
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
 function addMessage(content, sender, isHtml = false) {
 
     const messageDiv = messagesContainer.lastElementChild;
     // If the content is HTML (Markdown converted), insert as HTML
-    if (isHtml) {
+    // if (isHtml) {
         messageDiv.innerHTML = content;  // Inject the HTML content
-    } else {
-        messageDiv.textContent = content;  // Regular text content
-    }
+    // } else {
+        // messageDiv.textContent = content;  // Regular text content
+    //     messageDiv.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+    // }
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;  // Auto-scroll
 }
@@ -281,21 +290,25 @@ function renderMessage(sender, content) {
     div.className = sender; // 'user' or 'assistant'
     div.className += ' message';
     div.innerHTML = content;
-    wrapThinkBlocks(div);
+    if (sender === "assistant")
+        wrapThinkBlocks(div);
     messagesContainer.appendChild(div);
 }
 
 function loadMessages(id) {
-    fetch(`/chats/${id}/messages`)
-        .then(res => res.json())
-        .then(messages => {
-            chatId = id;
-            messagesContainer.innerHTML = '';
-            messages.forEach(m => {
-                renderMessage(m.sender, m.content);
+    if(id)
+    {
+        fetch(`/chats/${id}/messages`)
+            .then(res => res.json())
+            .then(messages => {
+                chatId = id;
+                messagesContainer.innerHTML = '';
+                messages.forEach(m => {
+                    renderMessage(m.sender, m.content);
+                });
             });
-        });
-    togglePanel();
+        // togglePanel();
+    }
 }
 
 function saveMessage(content, sender) {
@@ -309,8 +322,7 @@ function saveMessage(content, sender) {
     });
 }
 
-
-loadMessages();
+loadMessages(chatId);
 
 userInput.addEventListener('keypress', (e) => {
     if ((e.shiftKey && e.key === 'Enter')) {
@@ -321,33 +333,6 @@ userInput.addEventListener('keypress', (e) => {
     }
 });
 
-// const newChatBtn = document.getElementById('newChat');
-// if (newChatBtn) {
-//     newChatBtn.addEventListener('click', (e) => {
-//         chatId++;
-//         fetch(`/chats`, {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ name: `chat_${chatId}` }),
-//         }).then(response => console.log(response.json()))
-//             .catch(error => {
-//                 // Handle the error here
-//                 console.error('Error:', error);
-//                 if (error.response) {
-//                     // The request was made and the server responded with this status code
-//                     const err = error.response.data;
-//                     console.error('Server Error:', err);
-//                 } else {
-//                     // Something happened in setting up the request that triggered an error.
-//                     console.error('Error:', error.message);
-//                 }
-//             })
-//             .finally(() => {
-//                 // Do something after the promise is settled (regardless of success or failure)
-//                 loadMessages();
-//             });
-//     })
-// }
 
 document.addEventListener('DOMContentLoaded',()=>{
    userInput.focus();

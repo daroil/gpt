@@ -127,7 +127,6 @@ app.post('/transcribe', upload.single('audio'), (req, res) => {
 });
 
 // Create a new chat
-// Create a new chat
 app.post('/chats', (req, res) => {
     const { name } = req.body;
     console.log(name);
@@ -171,6 +170,26 @@ app.get('/chats/:chatId/messages', (req, res) => {
             res.json(rows);
         }
     );
+});
+
+app.delete('/chats/:chatId', (req, res) => {
+    const { chatId } = req.params;
+
+    // First delete the messages associated with the chat
+    db.run(`DELETE FROM messages WHERE chat_id = ?`, [chatId], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+
+        // Then delete the chat itself
+        db.run(`DELETE FROM chats WHERE id = ?`, [chatId], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+
+            if (this.changes === 0) {
+                return res.status(404).json({ error: 'Chat not found' });
+            }
+
+            res.json({ message: 'Chat deleted successfully' });
+        });
+    });
 });
 
 app.get('/chats/all', (req, res) => {
